@@ -1,0 +1,31 @@
+<%= form_with(model: project, local: true) do |form| %>
+  <% if project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% project.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title, id: :project_title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :description%>
+    <%= form.text_field :description, id: :project_description %>
+  </div>
+
+  <div class="field">
+    <%= form.label :tag_list, "Tags (Seperated by commas)" %>
+    <%= form.text_field :tag_list, id: :project_tag_list, value: project.tag_list.join(',') %>
+  </div>
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

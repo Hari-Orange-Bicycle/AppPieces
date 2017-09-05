@@ -1,0 +1,28 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @card.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @card.description %>
+</p>
+
+<p>
+  <strong>Project:</strong>
+  <%= @card.project %>
+</p>
+<script>
+  var client = filestack.init('A6vmsOMQtTAW8anaFhDhWz');
+  function showPicker() {
+      client.pick({
+      }).then(function(result) {
+          console.log(JSON.stringify(result.filesUploaded))
+      });
+  }
+</script>
+<input type="button" value="Upload" onclick="showPicker()" />
+<%= link_to 'Edit', edit_project_card_path(@project, @card) %> |
+<%= link_to 'Back', project_cards_path(@project) %>
