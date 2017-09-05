@@ -34,6 +34,7 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+gem 'sqlite3'
 
 gem 'algoliasearch-rails', '~> 1.20', '>= 1.20.1'
 gem 'friendly_id', '~> 5.1'
