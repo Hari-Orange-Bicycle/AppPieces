@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170904093345) do
+ActiveRecord::Schema.define(version: 20170910142416) do
+
+  create_table "assets", force: :cascade do |t|
+    t.string "file_name"
+    t.string "file_type"
+    t.string "file_source"
+    t.string "file_link"
+    t.integer "card_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_assets_on_card_id"
+  end
 
   create_table "cards", force: :cascade do |t|
     t.string "title"
@@ -22,6 +33,16 @@ ActiveRecord::Schema.define(version: 20170904093345) do
     t.string "slug"
     t.index ["project_id"], name: "index_cards_on_project_id"
     t.index ["slug"], name: "index_cards_on_slug", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.string "message"
+    t.integer "commentable_id"
+    t.string "commentable_type"
+    t.integer "commenter_id"
+    t.string "commenter_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -36,6 +57,20 @@ ActiveRecord::Schema.define(version: 20170904093345) do
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
   end
 
+  create_table "guest_projects", force: :cascade do |t|
+    t.integer "guest_id"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "guests", force: :cascade do |t|
+    t.string "full_name"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.string "description"
@@ -43,6 +78,7 @@ ActiveRecord::Schema.define(version: 20170904093345) do
     t.datetime "updated_at", null: false
     t.string "public_share_token"
     t.string "slug"
+    t.integer "user_id"
     t.index ["slug"], name: "index_projects_on_slug", unique: true
   end
 
@@ -69,6 +105,26 @@ ActiveRecord::Schema.define(version: 20170904093345) do
     t.string "name"
     t.integer "taggings_count", default: 0
     t.index ["name"], name: "index_tags_on_name", unique: true
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "cards_created", default: 0
+    t.string "avatar_url"
+    t.boolean "guest", default: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end

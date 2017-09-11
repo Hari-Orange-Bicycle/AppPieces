@@ -1,0 +1,145 @@
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, or any plugin's
+// vendor/assets/javascripts directory can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// compiled file. JavaScript code in this file should be added after the last require_* statement.
+//
+// Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
+// about supported directives.
+//
+//= require rails-ujs
+//= require turbolinks
+//= comments
+//= require jquery.atwho
+//= require_tree .
+
+
+var Comment = function () {
+  this.bindEvents();
+}
+Comment.prototype.bindEvents = function() {
+  this.messageFormatter();
+  this.bindAddGeneralComment();
+  this.bindAddCardComment();
+  this.bindClearComment();
+  this.bindListGeneralComments();
+};
+
+Comment.prototype.messageFormatter = function() {
+  // var _this = this;
+  // $('.comment-message').each(function (e) {
+  //  $(this).html(_this.formatMessage($(this).html()));
+  // })
+};
+
+Comment.prototype.formatMessage= function(message) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+    var text1 = message.replace(exp, "<a target='_blank' href='$1'>$1</a>")
+    var exp2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim
+    return text1.replace(exp2, '$1<a target="_blank" href="http://$2">$2</a>').replace(/<strong(.*?)>(.*?)<\/strong>/g, function(match, p1, p2) { return('<span class="comment-mention">@' + p2 + '</span>') });
+};
+
+Comment.prototype.bindAddGeneralComment = function() {
+  var _this = this;
+  $('.add-project-comment').on('click', function () {
+    $textarea = $(this).parent().siblings('.comment-textarea')
+    var commentMessage = $textarea.val();
+    var commentableType = $textarea.data('commentable-type')
+    var commentableId = $textarea.data('commentable-id')
+
+    $.ajax({
+      url: '/comments/',
+      method: 'post',
+      dataType: 'JSON',
+      data: { comment: { commentable_id: commentableId, commentable_type: commentableType, message: commentMessage } },
+      error: function(result) {
+        document.setFlash(result.responseText)
+      },
+      success: function(result) {
+        $textarea.text('');
+        $li = $('.blueprint-comment li').clone();
+        $li.find('.comment-message').html(_this.formatMessage(commentMessage))
+        $textarea.parent().siblings('.comment-group').append($li);
+        $(".comment-textarea").val('');
+      }
+    });
+  })
+};
+Comment.prototype.bindAddCardComment = function() {
+  var _this = this;
+  $(document).on('click', '.add-card-comment', function () {
+    $textarea = $(this).parent().siblings('.comment-textarea');
+    var commentMessage = $textarea.val();
+    var text_area_html = $.parseHTML( commentMessage )
+    $("#comments-textarea-html").html(text_area_html);
+    var mention_users = $.makeArray($("#comments-textarea-html").find('[data-type="user"]').map(function() {
+          return $(this).data('name');
+        }));
+    var commentableType = $textarea.data('commentable-type');
+    var commentableId = $textarea.data('commentable-id');
+    $.ajax({
+      url: '/comments/',
+      method: 'post',
+      dataType: 'JSON',
+      data: { comment: { commentable_id: commentableId, commentable_type: commentableType, message: commentMessage, mentions:  mention_users } },
+      error: function(result) {
+        document.setFlash(result.responseText)
+      },
+      success: function(result) {
+        console.log(result);
+        $textarea.text('');
+        $li = $('.blueprint-comment li').clone();
+
+
+        $li.find('.comment-message').html(text_area_html);
+        $('.comment-group').append($li);
+        $(".comment-textarea").val('');
+      }
+    });
+  })
+};
+Comment.prototype.bindClearComment = function() {
+  var _this = this;
+  $(document).on('click', '.clear-textarea', function () {
+    $(".comment-textarea").val('');
+  })
+};
+
+$(function(){
+  new Comment();
+})
+
+Comment.prototype.bindListGeneralComments = function() {
+  var _this = this;
+  $('.comments-link').on('click', function () {
+    var commentableId = $(this).data('commentable-id');
+    var commentableType = $(this).data('commentable-type');
+    $('#comment-body-section').html("<p>General comments are comments made on the project but not linked to any specific tags or cards. </p>");
+    $.ajax({
+      url: '/comments/',
+      method: 'get',
+      dataType: 'script',
+      data: { commentable_id: commentableId, commentable_type: commentableType },
+      success: function(result) {
+        console.log(result);
+      },
+      error: function(result) {
+        console.log(result.responseText)
+      }
+    });
+  })
+};
+
+
+// File stack upload logic
+var client = filestack.init('A6vmsOMQtTAW8anaFhDhWz');
+function showPicker() {
+  client.pick({
+  }).then(function(result) {
+    console.log(JSON.stringify(result));
+    $('#user_avatar_url').val(result.filesUploaded[0].url);
+  });
+}

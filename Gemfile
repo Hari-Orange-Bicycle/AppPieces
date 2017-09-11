@@ -34,11 +34,18 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem 'sqlite3'
+gem 'pg'
 
 gem 'algoliasearch-rails', '~> 1.20', '>= 1.20.1'
 gem 'friendly_id', '~> 5.1'
 gem 'acts-as-taggable-on', github: 'mbleigh/acts-as-taggable-on'
+gem 'devise', '~> 4.3'
+gem 'request_store'
+gem 'strip_attributes', '~> 1.8'
+gem 'jquery-atwho-rails', '~> 1.3', '>= 1.3.2'
+gem 'bootstrap_tagsinput_rails', '~> 0.4.0'
+gem 'devise-guests', '~> 0.6.0'
+gem 'rails_12factor', group: :production
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -46,7 +53,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
   gem 'selenium-webdriver'
-  gem 'sqlite3'
+  gem 'pg'
 end
 
 group :development do
@@ -64,9 +71,9 @@ group :development do
   gem 'pg'
 end
 
-gem 'pg'
-
 gem 'figaro'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+ruby '2.3.3'

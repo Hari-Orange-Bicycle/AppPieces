@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+  before_action :authenticate_user!, except: [:home]
   before_action :set_project, only: [:show, :edit, :update, :destroy]
   before_action :fetch_project_from_token, only: [:public_share]
 
@@ -6,9 +7,9 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     if(params[:tag])
-      @projects = Project.tagged_with(params[:tag])
+      @projects = current_user.projects.tagged_with(params[:tag])
     else
-      @projects = Project.all
+      @projects = current_user.projects
     end
   end
 
@@ -31,10 +32,13 @@ class ProjectsController < ApplicationController
   def edit
   end
 
+  def home
+  end
+
   # POST /projects
   # POST /projects.json
   def create
-    @project = Project.new(project_params)
+    @project = current_user.projects.new(project_params)
 
     respond_to do |format|
       if @project.save
@@ -79,7 +83,7 @@ class ProjectsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_project
-      @project = Project.friendly.find(params[:id] || params[:project_id])
+      @project = current_user.projects.friendly.find(params[:id] || params[:project_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
@@ -88,7 +92,7 @@ class ProjectsController < ApplicationController
     end
 
     def fetch_project_from_token
-      unless @project = Project.find_by(public_share_token: params[:token])
+      unless @project = current_user.projects.find_by(public_share_token: params[:token])
         redirect_to root_path, alert: 'The share token is invalid.' and return
       end
     end

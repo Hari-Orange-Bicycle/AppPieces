@@ -1,0 +1,88 @@
+<div class="hide blueprint-comment">
+  <li>
+    <div class='comment-block'>
+      <img class="user-comment-image" style="
+    width: 40px; border-radius: 50%; -moz-border-radius: 50%; -webkit-border-radius: 50%; border: solid 1px #171a1d; left: 23px; top: 0; z-index: 4;" src= '<%= current_user.avatar_url %>' />
+      <h4>
+        You
+      </h4>
+      <h6>
+        Just now
+      </h6>
+      <p class="comment-message">
+      </p>
+    </div>
+  </li>
+</div>
+
+<ul class="comment-group">
+  <% card.comments.order(:created_at).each do |comment| %>
+    <li class="comment-<%= comment.id %>">
+      <div class='comment-block'>
+        <img class="user-comment-image" src= '<%= comment.commenter&.avatar_url %>' style="
+    width: 40px; border-radius: 50%; -moz-border-radius: 50%; -webkit-border-radius: 50%; border: solid 1px #171a1d; left: 23px; top: 0; z-index: 4;"/>
+        <h4>
+          <%= comment.commenter == current_user ? 'You' : comment.commenter&.full_name %>
+        </h4>
+        <h6>
+          <%= comment.created_at %>
+        </h6>
+        <p class="comment-message">
+          <%= raw  comment.message %>
+        </p>
+      </div>
+    </li>
+  <% end %>
+</ul>
+<div class="comment-holder">
+  <textarea class="emoji-decorated comment-editor comment-input__input comment-textarea mention" data-emojiable="true" data-emoji-input="unicode" data-commentable-type="Card" data-commentable-id="<%= card.id %>" id="comment_text_box"></textarea>
+  <div class="add-remove-comment">
+    <button class='btn btn-link cursor add add-card-comment'>Add my comment </button>
+    <span class="or">or</span>
+    <button type="button" class="btn btn-link cursor cancel clear-textarea">cancel</button>
+    <!-- <span class='cursor cancel clear-textarea'> cancel</span> -->
+  </div>
+</div>
+
+<div id="comments-textarea-html"></div>
+
+
+<script type="text/javascript">
+  $(function(){
+    var emojis = ["smile", "iphone", "girl", "smiley", "heart", "kiss", "copyright", "coffee"];
+
+    var users = <%= raw User.select([:email, :avatar_url]).to_json(except: :id) %>;
+    console.log(users);
+    var emojisList = $.map(emojis, function(value, i) {
+      return {'id':i, 'name':value};
+    });
+
+    var issues = [
+      { name: "1", content: "stay foolish"},
+      { name: "2", content: "stay hungry"},
+      { name: "3", content: "stay heathly"},
+      { name: "4", content: "this happiess"},
+    ];
+
+    $("textarea")
+      .atwho({
+        at: "@",
+        data: users,
+        displayTpl: "<li><img src='${avatar_url}' height='20' width='20'/> ${email} </li>",
+        insertTpl: "<img src='${avatar_url}' height='20' width='20'/> <a href='#' data-type='user' data-name='${email}'>${email}</a>",
+        searchKey: "email",
+        limit: 10
+      })
+      .atwho({
+        at: "#",
+        displayTpl: '<li>${name} <small>${content}</small></li>',
+        data: issues
+      })
+      .atwho({
+        at: ":",
+        displayTpl: "<li><img src='http://a248.e.akamai.net/assets.github.com/images/icons/emoji/${name}.png' height='20' width='20'/> ${name} </li>",
+        insertTpl: ':${name}:',
+        data: emojisList
+      });
+  })
+</script>

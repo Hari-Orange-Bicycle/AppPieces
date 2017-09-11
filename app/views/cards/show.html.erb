@@ -1,28 +1,77 @@
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <div class="col-md-3">
+    <strong>Title:</strong>
+    <%= @card.title %> </br>
+    <strong>Description:</strong>
+    <%= @card.description %>
+    <hr>
+      <p> Tags: <%= raw @card.tag_list.map { |t| link_to t, card_tag_path(@project, t) }.join(', ') %> </p>
+      <input type="text" id="docs" value="<%= @card.tag_list %>" data-role="tagsinput" />
+    <hr>
+    <div id="card_assets"> Documents here
+      <input type="text" id="docs" value="Amsterdam,Washington,Sydney,Beijing,Cairo" data-role="tagsinput" />
+      <input type="button" value="Upload" onclick="showPicker()" />
+    </div>
+    <hr>
+      <div class="input-group">
+        <span class="input-group-addon" id="basic-addon1">&#128279;</span>
+        <input type="text" class="form-control" id="external-site-url", placeholder="Please enter external site url here ...">
+      </div>
+    <hr>
+    <%= render partial: "shared/card_comments", locals: { card: @card } %>
+  </div>
+  <div class="col-md-9">
+    This is iframe loader
+    <div id='iframe-container'>
+      <iframe id="website-loader" style="width: 100%;min-height: 600px;" src="https://timblee.com/"></iframe>
+    </div>
+  </div>
+</div>
 
-<p>
-  <strong>Title:</strong>
-  <%= @card.title %>
-</p>
 
-<p>
-  <strong>Description:</strong>
-  <%= @card.description %>
-</p>
-
-<p>
-  <strong>Project:</strong>
-  <%= @card.project %>
-</p>
+<!-- [{"filename":"2017-03-10-22-20-36-457.jpg.png","handle":"pRzRPDkR5qRqDYdC63sL","mimetype":"image/png","originalPath":"2017-03-10-22-20-36-457.jpg","size":298819,"source":"local_file_system","url":"https://cdn.filestackcontent.com/pRzRPDkR5qRqDYdC63sL","originalFile":{"name":"2017-03-10-22-20-36-457.jpg","type":"image/jpeg","size":79616},"status":"Stored"}] -->
+<!-- File stack upload logic  -->
 <script>
+
   var client = filestack.init('A6vmsOMQtTAW8anaFhDhWz');
+  var card_id = <%= @card.id %>;
   function showPicker() {
-      client.pick({
-      }).then(function(result) {
-          console.log(JSON.stringify(result.filesUploaded))
-      });
+    client.pick({
+    }).then(function(result) {
+      console.log(JSON.stringify(result));
+      // $('#user_avatar_url').val(result.filesUploaded[0].url);
+      var uploaded_file = result.filesUploaded[0];
+      console.log(uploaded_file);
+      // createNewAssetForCard(uploaded_file);
+    });
   }
+
+  function createNewAssetForCard(uploaded_file){
+    alert("G");
+    $.ajax({
+      url: 'http://localhost:3000/assets',
+      method: 'post',
+      dataType: 'script',
+      data: { file_name: uploaded_file.filename, file_type: uploaded_file.mimetype, file_source: uploaded_file.source, file_link: uploaded_file.url, card_id: card_id },
+      success: function(result) {
+        console.log(result);
+      },
+      error: function(result) {
+        console.log(result.responseText)
+      }
+    });
+  }
+
+  var external_site_url = "https://timblee.com/";
+  $( "#external-site-url" ).change(function() {
+    external_site_url = $(this).val();
+    $("#iframe-container").empty();
+    $("#iframe-container").append("<iframe style='width: 100%;min-height: 600px;' src='" + external_site_url + "' />");
+  });
+
 </script>
-<input type="button" value="Upload" onclick="showPicker()" />
-<%= link_to 'Edit', edit_project_card_path(@project, @card) %> |
-<%= link_to 'Back', project_cards_path(@project) %>
+
+<!-- File stack upload logic  end here -->
+
+<%#= link_to 'Edit', edit_project_card_path(@project, @card) %>
+<%#= link_to 'Back', project_cards_path(@project) %>

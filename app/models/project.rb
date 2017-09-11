@@ -3,7 +3,11 @@ class Project < ApplicationRecord
 	extend FriendlyId
 	acts_as_taggable_on :tags, :cards
 
-	has_many :cards
+  belongs_to :user
+	has_many :cards,  dependent: :destroy
+  has_many :comments, as: :commentable, dependent: :delete_all
+  has_many :card_comments, source: :comments, through: :cards
+
 	before_validation :set_unique_public_share_token, on: :create
 
 	algoliasearch index_name: "Project" do

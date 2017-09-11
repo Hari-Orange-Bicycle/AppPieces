@@ -1,0 +1,84 @@
+// Place all the styles related to the comments controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+$primaryPink      : #ec008c;
+
+.toggle-comments-outer {
+  display: table;
+  width: 75px;
+  margin-right: 50px;
+  height: 80px;
+  .toggle-comments {
+    cursor: pointer;
+    z-index: 1;
+    display: table-cell;
+    vertical-align: middle;
+    span:not(.icon-comment) {
+      display: block;
+      text-transform: uppercase;
+      text-align: right;
+      font-size: 8px;
+    }
+    .icon-comment {
+      font-size: 18px;
+      position: relative;
+      top: 6px;
+      left: -5px;
+    }
+    .btn-toggle-comments:hover {
+      color: $primaryPink;
+    }
+  }
+}
+
+
+/* Comments */
+.sitemap-right-sidebar {
+  position: fixed;
+  right: -435px;
+  width: 420px;
+  top: 136px;
+  height: calc(100% - 136px);
+  background: #262b30;
+  z-index: 23;
+  transition: .35s;
+  box-shadow: 0px 0px 20px 7px rgba(147, 147, 147, 1);
+  overflow-y: auto;
+  padding-top: 60px;
+  &.open {
+    right: 0;
+  }
+
+  .ui-menu-item {
+    &:before {
+      display: none;
+    }
+  }
+
+  .comment-group {
+    margin-bottom: 25px;
+    li:last-child {
+      position: relative;
+      &:before {
+        content: ' ';
+        height: 98%;
+        background: #262b30;
+        width: 2px;
+        z-index: 4;
+        left: 40px;
+        top: 2%;
+        position: absolute;
+      }
+    }
+  }
+
+
+.comment-holder {
+  position: relative;
+  height: 170px;
+  background: #fff;
+  .add-remove-comment {
+    bottom: 13px;
+  }
+}
+}

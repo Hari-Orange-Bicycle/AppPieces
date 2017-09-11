@@ -1,10 +1,17 @@
 class Card < ApplicationRecord
   include AlgoliaSearch
   extend FriendlyId
-  acts_as_taggable_on :tags
+
+  after_create :increment_cards_count_of_current_user
+  after_destroy :decrement_cards_count_of_current_user
 
   belongs_to :project
+  has_many :comments, as: :commentable, dependent: :destroy
+  has_many :assets, dependent: :destroy
+
+  acts_as_taggable_on :tags
   before_validation :set_unique_public_share_token, on: :create
+
 
   algoliasearch index_name: "Card" do
     attributes :title, :description, :tag_list
@@ -31,4 +38,13 @@ class Card < ApplicationRecord
   def set_unique_public_share_token
     self.public_share_token = Digest::SHA1.hexdigest([Time.now, rand].join)[0,10]
   end
+
+  private
+    def increment_cards_count_of_current_user
+      User.current_user.increment!(:cards_created)
+    end
+
+    def decrement_cards_count_of_current_user
+      User.current_user.decrement!(:cards_created)
+    end
 end

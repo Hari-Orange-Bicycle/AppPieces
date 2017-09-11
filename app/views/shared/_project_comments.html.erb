@@ -1,0 +1,66 @@
+<div class="modal fade" id="projectCommentsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg project-comments-modal" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">App Pieces</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"> <!--Start of modla body  -->
+        <div class="row">
+          <div class="col-sm-2"> <!-- start of left side bar-->
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" class="comments-link" data-parent="#accordion" href="#general-comments" data-commentable-id="<%= @project.id %>" data-commentable-type="Project">
+                    General comments</a> <span class="badge"><%= @project.comments.count %></span>
+                  </h4>
+                </div>
+                <div id="general-comments" class="panel-collapse collapse in" data-commentable-id="<%= @project.id %>", data-commentable-type="Project">
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#tag-comments">
+                    Comments on tags</a> <span class="badge">12</span>
+                  </h4>
+                </div>
+                <div id="tag-comments" class="panel-collapse collapse in">
+                  
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#card-comments">
+                    Comments on cards</a><span class="badge"><%= Comment.by_commentable_type("Card").by_commentable_id(@project.id).count %></span>
+                  </h4>
+                </div>
+                <div id="card-comments" class="panel-collapse collapse in">
+                  <ul class="list-group">
+                    <% @project.cards.each do |card| %>
+                      <li class="list-group-item">  <a data-toggle="collapse" class="comments-link" href="#" data-commentable-id="<%= card.id %>" data-commentable-type="Card"><%= card.title %><span class="badge"><%= card.comments.count %></span></a></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div> <!-- end of left side bar-->
+          <div class="col-sm-5">
+            <div id="comment-body-section"></div>
+          </div>
+          <div class="col-sm-5"> <!--  comments section start here -->
+            <dir id="commenting-section">
+              
+            </dir>
+          </div> <!--  comments section end here -->
+        </div>
+       </div> <!--end of modla body  -->
+    </div>
+  </div>
+</div>
